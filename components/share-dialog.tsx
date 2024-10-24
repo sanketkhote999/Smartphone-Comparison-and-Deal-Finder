@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import { Share2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -13,6 +14,20 @@ import {
 import { Input } from "@/components/ui/input";
 
 export function ShareDialog({ productName }: { productName: string }) {
+  const [currentUrl, setCurrentUrl] = useState("");
+
+  useEffect(() => {
+    setCurrentUrl(window.location.href);
+  }, []);
+
+  const handleCopy = async () => {
+    try {
+      await navigator.clipboard.writeText(currentUrl);
+    } catch (err) {
+      console.error("Failed to copy text: ", err);
+    }
+  };
+
   return (
     <Dialog>
       <DialogTrigger asChild>
@@ -28,13 +43,8 @@ export function ShareDialog({ productName }: { productName: string }) {
           </DialogDescription>
         </DialogHeader>
         <div className="flex items-center space-x-2">
-          <Input
-            readOnly
-            value={window.location.href}
-          />
-          <Button onClick={() => navigator.clipboard.writeText(window.location.href)}>
-            Copy
-          </Button>
+          <Input readOnly value={currentUrl} />
+          <Button onClick={handleCopy}>Copy</Button>
         </div>
       </DialogContent>
     </Dialog>
